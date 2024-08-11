@@ -46,6 +46,8 @@ function displayAudio(blob) {
 
   audio.controls = true;
 
+  audio.controlsList = "download";
+
   document.body.appendChild(audio);
 }
 
