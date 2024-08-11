@@ -1,3 +1,5 @@
+const apiUrl = "http://localhost:3000/upload";
+
 let auidoRecorder = document.querySelector("#audio-recorder");
 let stop = document.getElementById("stop");
 
@@ -31,23 +33,20 @@ function record(stream) {
 
     let blob = new Blob(chunks, { type: "audio/webm" });
     chunks = [];
-    download(blob);
+    displayAudio(blob);
   };
 
   stop.onclick = () => mediaRecorder.stop();
 }
 
-function download(blob) {
-  let link = document.createElement("a");
-  link.href = window.URL.createObjectURL(blob);
-  link.setAttribute("download", "audio_recorded.webm");
-  link.style.display = "none";
+function displayAudio(blob) {
+  let audio = document.createElement("audio");
 
-  document.body.appendChild(link);
+  audio.src = window.URL.createObjectURL(blob);
 
-  link.click();
+  audio.controls = true;
 
-  link.remove();
+  document.body.appendChild(audio);
 }
 
 const audio = document.createElement("audio");
@@ -55,3 +54,15 @@ audio.controls = true;
 audio.preload = "auto";
 audio.src = "https://manzdev.github.io/codevember2017/assets/eye-tiger.mp3";
 document.body.appendChild(audio);
+
+async function getArchives() {
+  try {
+    const response = await fetch(apiUrl, method);
+    const results = await response.json();
+    console.log(results);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+getArchives();
