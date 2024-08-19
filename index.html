@@ -4,10 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Graba audio y video en la web</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <button type="button" id="button">Grabar</button>
-    <button type="button" id="stop">Detener</button>
+    <div>
+      <button type="button" id="button" class="record-button">
+        <img
+          src="assets/mic-svgrepo-com.svg"
+          alt=""
+          srcset=""
+          class="mic-icon"
+        />
+      </button>
+    </div>
+
+    <div>
+      <button type="button" id="stop">Detener</button>
+    </div>
+
+    <div>
+      <button type="button" id="delete">Eliminar</button>
+    </div>
 
     <script src="record.js"></script>
   </body>

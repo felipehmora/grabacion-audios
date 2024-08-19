@@ -2,6 +2,7 @@ const apiUrl = "http://localhost:3000/upload";
 
 let auidoRecorder = document.querySelector("#audio-recorder");
 let stop = document.getElementById("stop");
+let actionDelete = document.getElementById("delete");
 
 document.querySelector("#button").addEventListener("click", function (ev) {
   navigator.mediaDevices
@@ -40,7 +41,7 @@ function record(stream) {
 }
 
 function displayAudio(blob) {
-  let audio = document.createElement("audio");
+  let audio = document.createElement("audio", (id = "audiocreated"));
 
   audio.src = window.URL.createObjectURL(blob);
 
@@ -49,6 +50,8 @@ function displayAudio(blob) {
   audio.controlsList = "download";
 
   document.body.appendChild(audio);
+
+  actionDelete.onclick = () => document.getElementById("audiocreated").remove;
 }
 
 const audio = document.createElement("audio");
