@@ -1,7 +1,16 @@
 const mic_btn = document.querySelector("#mic");
 const playback = document.querySelector("audio");
+const aside = document.querySelector("aside");
 
 mic_btn.addEventListener("click", ToogleMic);
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
 
 let can_record = false;
 let is_recording = false;

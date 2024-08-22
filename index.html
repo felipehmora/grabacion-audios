@@ -11,10 +11,23 @@
     <nav>
       <ul>
         <li>
-          <img src="assets/menu-svgrepo-com.svg" alt="" />
+          <img
+            src="assets/menu-svgrepo-com.svg"
+            alt=""
+            style="font-size: 30px; cursor: pointer"
+            onclick="openNav()"
+          />
         </li>
       </ul>
     </nav>
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
+        >&times;</a
+      >
+      <a href="#">Transcribir</a>
+    </div>
+
     <div>
       <button type="button" id="mic" class="record-button">
         <img
