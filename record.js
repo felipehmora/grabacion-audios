@@ -1,73 +1,68 @@
-const apiUrl = "http://localhost:3000/upload";
+const mic_btn = document.querySelector("#mic");
+const playback = document.querySelector("audio");
 
-let auidoRecorder = document.querySelector("#audio-recorder");
-let stop = document.getElementById("stop");
-let actionDelete = document.getElementById("delete");
+mic_btn.addEventListener("click", ToogleMic);
 
-document.querySelector("#button").addEventListener("click", function (ev) {
-  navigator.mediaDevices
-    .getUserMedia({ audio: true })
-    .then(record)
-    .catch((err) => console.log(err));
-});
+let can_record = false;
+let is_recording = false;
+
+let recorder = null;
 
 let chunks = [];
 
-function record(stream) {
-  //auidoRecorder.srcObject = stream;
+function SetUpAudio() {
+  console.log("Setup");
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(SetUpStream)
+      .catch((err) => console.log(err));
+  }
+}
 
-  let mediaRecorder = new MediaRecorder(stream, {
-    mimeType: "audio/webm;",
-  });
+SetUpAudio();
 
-  mediaRecorder.start();
+function SetUpStream(stream) {
+  recorder = new MediaRecorder(stream);
 
-  console.log("empieza la grabacion");
-
-  mediaRecorder.ondataavailable = function (e) {
+  recorder.ondataavailable = function (e) {
     console.log(e.data);
     chunks.push(e.data);
   };
 
-  mediaRecorder.onstop = function () {
-    alert("Finalizo la grabacion");
-
+  recorder.onstop = function () {
     let blob = new Blob(chunks, { type: "audio/webm" });
     chunks = [];
     displayAudio(blob);
   };
 
-  stop.onclick = () => mediaRecorder.stop();
+  can_record = true;
 }
 
-function displayAudio(blob) {
-  let audio = document.createElement("audio", (id = "audiocreated"));
+function ToogleMic() {
+  if (!can_record) return;
 
-  audio.src = window.URL.createObjectURL(blob);
+  is_recording = !is_recording;
 
-  audio.controls = true;
-
-  audio.controlsList = "download";
-
-  document.body.appendChild(audio);
-
-  actionDelete.onclick = () => document.getElementById("audiocreated").remove;
-}
-
-const audio = document.createElement("audio");
-audio.controls = true;
-audio.preload = "auto";
-audio.src = "https://manzdev.github.io/codevember2017/assets/eye-tiger.mp3";
-document.body.appendChild(audio);
-
-async function getArchives() {
-  try {
-    const response = await fetch(apiUrl, method);
-    const results = await response.json();
-    console.log(results);
-  } catch (error) {
-    console.log(error);
+  if (is_recording) {
+    recorder.start();
+    mic_btn.classList.add("recording");
+  } else {
+    recorder.stop();
+    mic_btn.classList.remove("recording");
   }
 }
 
-getArchives();
+function displayAudio(blob) {
+  const audioURL = window.URL.createObjectURL(blob);
+
+  playback.src = audioURL;
+
+  playback.controlsList = "download";
+}
+
+/*const audio = document.createElement("audio");
+audio.controls = true;
+audio.preload = "auto";
+audio.src = "https://manzdev.github.io/codevember2017/assets/eye-tiger.mp3";
+document.body.appendChild(audio);*/
