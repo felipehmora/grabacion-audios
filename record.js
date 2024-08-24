@@ -1,7 +1,6 @@
 const mic_btn = document.querySelector("#mic");
 const playback = document.querySelector("audio");
 const aside = document.querySelector("aside");
-const audio_container = document.querySelector(".audio-container");
 
 mic_btn.addEventListener("click", ToogleMic);
 
@@ -11,6 +10,11 @@ function openNav() {
 
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
+}
+
+function deleteAudio() {
+  const audio_container = document.querySelector(".audio-container");
+  audio_container.addEventListener("click", console.log("hola soy borrar"));
 }
 
 let can_record = false;

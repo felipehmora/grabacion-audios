@@ -19,6 +19,7 @@ nav {
 }
 
 nav > ul > li {
+  display: inline;
   list-style: none;
 }
 
@@ -111,4 +112,14 @@ nav > ul > li {
   /* Opcional: ajusta el tamaño del elemento de audio si lo necesitas */
   width: 100%;
   max-width: 300px; /* o cualquier otro valor que prefieras */
+}
+
+.delete-button {
+  margin-left: 90%;
+}
+
+@media (max-width: 780px) {
+  .delete-button {
+    margin-top: 0%;
+  }
 }
