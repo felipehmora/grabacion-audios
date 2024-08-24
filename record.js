@@ -1,6 +1,7 @@
 const mic_btn = document.querySelector("#mic");
 const playback = document.querySelector("audio");
 const aside = document.querySelector("aside");
+const audio_container = document.querySelector(".audio-container");
 
 mic_btn.addEventListener("click", ToogleMic);
 
@@ -63,15 +64,18 @@ function ToogleMic() {
 }
 
 function displayAudio(blob) {
+  console.log("display audio funciona");
   const audioURL = window.URL.createObjectURL(blob);
 
   playback.src = audioURL;
 
   playback.controlsList = "download";
-}
 
-/*const audio = document.createElement("audio");
-audio.controls = true;
-audio.preload = "auto";
-audio.src = "https://manzdev.github.io/codevember2017/assets/eye-tiger.mp3";
-document.body.appendChild(audio);*/
+  const audioElement = document.createElement("audio");
+
+  audio_container.appendChild(audioElement);
+
+  audioElement.src = audioURL;
+
+  audioElement.controls = true;
+}
