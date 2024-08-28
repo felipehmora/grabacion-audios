@@ -1,5 +1,6 @@
 const mic_btn = document.querySelector("#mic");
 const playback = document.querySelector("audio");
+const audio_container = document.querySelector(".audio-container");
 const aside = document.querySelector("aside");
 
 mic_btn.addEventListener("click", ToogleMic);
@@ -77,7 +78,7 @@ function displayAudio(blob) {
 
   const audioElement = document.createElement("audio");
 
-  audio_container.appendChild(audioElement);
+  document.body.appendChild(audioElement);
 
   audioElement.src = audioURL;
 
