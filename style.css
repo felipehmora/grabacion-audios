@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 60px;
+  gap: 20px;
 }
 
 nav {
@@ -122,4 +122,8 @@ nav > ul > li {
   .delete-button {
     margin-top: 10%;
   }
+}
+
+button {
+  border-style: none;
 }
