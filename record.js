@@ -3,9 +3,13 @@ const playback = document.querySelector("audio");
 const audio_container = document.querySelector(".audio-container");
 const aside = document.querySelector("aside");
 const deleteAudio = document.querySelectorAll(".playback");
-const audioDelete = document.getElementById("delete");
+const garbage = document.querySelector("#delete-button");
 
 mic_btn.addEventListener("click", ToogleMic);
+
+function changeHover() {
+  console.log("hola soy change");
+}
 
 function openNav() {
   document.getElementById("mySidenav").style.width = "250px";
@@ -14,6 +18,10 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
+
+garbage.addEventListener("click", () => {
+  console.log("hola mundo");
+});
 
 let can_record = false;
 let is_recording = false;
@@ -85,7 +93,17 @@ function displayAudio(blob) {
 
   audioElement.classList.add("playback");
 
-  audioDelete.addEventListener("click", () => {
+  audioElement.draggable = true;
+
+  audioElement.addEventListener("dragstart", () => {
+    console.log("ayuda me estan moviendo");
+  });
+
+  audioElement.addEventListener("dragend", () => {
+    console.log("uf me soltaron");
+  });
+
+  garbage.addEventListener("dragenter", () => {
     audioElement.remove();
   });
 }
