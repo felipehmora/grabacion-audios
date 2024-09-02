@@ -68,7 +68,7 @@ nav > ul > li {
 
 .side-menu {
   position: relative;
-  right: 45%;
+  right: 10%;
   top: 0;
   background-color: grey;
   width: 10%;
@@ -120,7 +120,7 @@ nav > ul > li {
 
 @media (max-width: 450px) {
   .delete-button {
-    margin-top: 10%;
+    margin-left: 30%;
   }
 }
 

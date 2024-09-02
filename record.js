@@ -4,6 +4,7 @@ const audio_container = document.querySelector(".audio-container");
 const aside = document.querySelector("aside");
 const deleteAudio = document.querySelectorAll(".playback");
 const garbage = document.querySelector("#delete-button");
+let allAudios = [];
 
 mic_btn.addEventListener("click", ToogleMic);
 
@@ -18,10 +19,6 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
-
-garbage.addEventListener("click", () => {
-  console.log("hola mundo");
-});
 
 let can_record = false;
 let is_recording = false;
@@ -78,32 +75,41 @@ function displayAudio(blob) {
   const audioURL = window.URL.createObjectURL(blob);
 
   playback.src = audioURL;
-
   playback.controlsList = "download";
 
+  console.log(allAudios);
+
   const audioElement = document.createElement("audio");
+
+  allAudios.push(audioElement);
 
   document.body.appendChild(audioElement);
 
   audioElement.src = audioURL;
-
   audioElement.controls = true;
-
-  audioElement.id = "audioCreated";
-
+  audioElement.id = "audio-created";
   audioElement.classList.add("playback");
-
   audioElement.draggable = true;
 
-  audioElement.addEventListener("dragstart", () => {
-    console.log("ayuda me estan moviendo");
+  addEventListener("dragstart", (event) => {
+    draggedElement = event.target;
+    playback.currentSrc;
+    console.log(draggedElement.currentSrc);
   });
 
-  audioElement.addEventListener("dragend", () => {
-    console.log("uf me soltaron");
+  garbage.addEventListener("dragover", (ev) => {
+    ev.preventDefault();
   });
 
-  garbage.addEventListener("dragenter", () => {
-    audioElement.remove();
+  garbage.addEventListener("drop", (ev) => {
+    ev.preventDefault();
+
+    const index = allAudios.indexOf(draggedElement);
+    if (index > -1) {
+      allAudios.splice(index, 1);
+    }
+
+    draggedElement.remove();
+    console.log(draggedElement);
   });
 }
