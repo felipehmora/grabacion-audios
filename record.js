@@ -5,6 +5,40 @@ const aside = document.querySelector("aside");
 const deleteAudio = document.querySelectorAll(".playback");
 const garbage = document.querySelector("#delete-button");
 let allAudios = [];
+let db;
+const request = indexedDB.open("audios");
+
+request.onsuccess = function (event) {
+  db = event.target.result;
+  console.log("Base de datos abierta:", db);
+  leerDatos(); // Leer datos al abrir
+};
+
+request.onerror = function (event) {
+  console.error("Error al abrir la base de datos:", event);
+};
+
+request.onupgradeneeded = function (event) {
+  db = event.target.result;
+  const store = db.createObjectStore("miAlmacen", {
+    keyPath: "id",
+    audio: addAudio,
+    autoIncrement: true,
+  });
+  console.log("Almacén de objetos creado");
+
+  const addAudio = store.add(allAudios);
+};
+
+function leerDatos() {
+  const transaction = db.transaction(["miAlmacen"], "readonly");
+  const store = transaction.objectStore("miAlmacen");
+  const request = store.getAll();
+
+  request.onsuccess = function (event) {
+    console.log("Datos leídos:", event.target.result);
+  };
+}
 
 mic_btn.addEventListener("click", ToogleMic);
 
@@ -56,6 +90,24 @@ function SetUpStream(stream) {
   can_record = true;
 }
 
+function agregarAudio(audioData) {
+  const transaction = db.transaction(["miAlmacen"], "readwrite");
+  const store = transaction.objectStore("miAlmacen");
+
+  // Agregar cada audio en allAudios (si es un array)
+  audioData.forEach((audio) => {
+    const request = store.add(audio);
+
+    request.onsuccess = function () {
+      console.log("Audio agregado con éxito a la base de datos");
+    };
+
+    request.onerror = function (event) {
+      console.error("Error al agregar audio:", event);
+    };
+  });
+}
+
 function ToogleMic() {
   if (!can_record) return;
 
@@ -74,6 +126,12 @@ function displayAudio(blob) {
   console.log("display audio funciona");
   const audioURL = window.URL.createObjectURL(blob);
 
+  const audioURLObj = {
+    audioURL: window.URL.createObjectURL(blob),
+  };
+
+  agregarAudio(allAudios);
+
   playback.src = audioURL;
   playback.controlsList = "download";
 
@@ -81,11 +139,11 @@ function displayAudio(blob) {
 
   const audioElement = document.createElement("audio");
 
-  allAudios.push(audioElement);
+  allAudios.push(audioURLObj);
 
   document.body.appendChild(audioElement);
 
-  audioElement.src = audioURL;
+  audioElement.src = audioURLObj;
   audioElement.controls = true;
   audioElement.id = "audio-created";
   audioElement.classList.add("playback");
