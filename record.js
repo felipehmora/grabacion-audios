@@ -7,6 +7,15 @@ const garbage = document.querySelector("#delete-button");
 let allAudios = [];
 let db;
 const request = indexedDB.open("audios");
+let stopEjecution = false;
+
+window.onload = function () {
+  detenerDisplay = true; // Cambia a true para detener la ejecución
+  loadAudiosFromDB(); // Cargar los audios almacenados al recargar la página
+
+  // Si deseas restablecer la bandera después de la carga, puedes hacerlo aquí
+  detenerDisplay = false; // Cambia de nuevo a false si es necesario
+};
 
 request.onsuccess = function (event) {
   db = event.target.result;
@@ -85,6 +94,7 @@ function SetUpStream(stream) {
     let blob = new Blob(chunks, { type: "audio/webm" });
     chunks = [];
     displayAudio(blob);
+    agregarAudio(allAudios);
   };
 
   can_record = true;
@@ -132,8 +142,6 @@ function displayAudio(blob) {
     autoIncrement: true,
     audioData: blob,
   };
-
-  agregarAudio(allAudios);
 
   playback.src = audioURL;
   playback.controlsList = "download";
@@ -184,6 +192,7 @@ function loadAudiosFromDB() {
 
   request.onsuccess = function (event) {
     const allAudios = event.target.result;
+    console.log(allAudios);
 
     if (allAudios && allAudios.length > 0) {
       allAudios.forEach((audio) => {
