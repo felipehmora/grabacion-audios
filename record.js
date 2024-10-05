@@ -127,7 +127,10 @@ function displayAudio(blob) {
   const audioURL = window.URL.createObjectURL(blob);
 
   const audioURLObj = {
+    keyPath: "id",
     audioURL: window.URL.createObjectURL(blob),
+    autoIncrement: true,
+    audioData: blob,
   };
 
   agregarAudio(allAudios);
@@ -139,11 +142,11 @@ function displayAudio(blob) {
 
   const audioElement = document.createElement("audio");
 
-  allAudios.push(audioURLObj);
+  console.log(allAudios.push(audioURLObj));
 
   document.body.appendChild(audioElement);
 
-  audioElement.src = audioURLObj;
+  audioElement.src = audioURLObj.audioURL;
   audioElement.controls = true;
   audioElement.id = "audio-created";
   audioElement.classList.add("playback");
@@ -170,4 +173,33 @@ function displayAudio(blob) {
     draggedElement.remove();
     console.log(draggedElement);
   });
+}
+
+// Función para recuperar todos los audios de la base de datos
+function loadAudiosFromDB() {
+  const transaction = db.transaction(["miAlmacen"], "readonly");
+  const store = transaction.objectStore("miAlmacen");
+
+  const request = store.getAll(); // Recuperar todos los audios
+
+  request.onsuccess = function (event) {
+    const allAudios = event.target.result;
+
+    if (allAudios && allAudios.length > 0) {
+      allAudios.forEach((audio) => {
+        // Verifica si los datos son un Blob
+        if (audio.audioData instanceof Blob) {
+          displayAudio(audio.audioData); // Mostrar el audio en la vista
+        } else {
+          console.error("El audio recuperado no es un Blob:", audio.audioData);
+        }
+      });
+    } else {
+      console.log("No hay audios en la base de datos");
+    }
+  };
+
+  request.onerror = function (event) {
+    console.error("Error al cargar audios desde la base de datos", event);
+  };
 }
