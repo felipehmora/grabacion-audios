@@ -134,7 +134,6 @@ function ToogleMic() {
 
 function displayAudio(blob) {
   console.log("display audio funciona");
-  const audioURL = window.URL.createObjectURL(blob);
 
   const audioURLObj = {
     keyPath: "id",
@@ -142,9 +141,6 @@ function displayAudio(blob) {
     autoIncrement: true,
     audioData: blob,
   };
-
-  playback.src = audioURL;
-  playback.controlsList = "download";
 
   console.log(allAudios);
 
