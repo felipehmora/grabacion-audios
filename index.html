@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Graba audio y video en la web</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" />
+    <!--<link rel="stylesheet" href="node_modules/normalize.css/normalize.css" />-->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
   </head>
   <body>
     <nav>
-      <ul>
-        <li>
-          <img
-            src="assets/menu-svgrepo-com.svg"
-            alt=""
-            style="font-size: 30px; cursor: pointer"
-            onclick="openNav()"
-          />
-        </li>
-        <li class="delete-button" id="delete-button">
-          <button id="delete">
-            <img src="assets/delete-2-svgrepo-com.svg" alt="" />
-          </button>
-        </li>
-      </ul>
+      <div class="side-menu">
+        <img
+          src="assets/menu-svgrepo-com.svg"
+          alt=""
+          style="font-size: 30px; cursor: pointer"
+          onclick="openNav()"
+        />
+      </div>
+
+      <div class="delete">
+        <button id="delete-button">
+          <img src="assets/delete-2-svgrepo-com.svg" alt="" />
+        </button>
+      </div>
     </nav>
 
     <div id="mySidenav" class="sidenav">

@@ -7,7 +7,6 @@ const garbage = document.querySelector("#delete-button");
 let allAudios = [];
 let db;
 const request = indexedDB.open("audios");
-let stopEjecution = false;
 
 window.onload = function () {
   detenerDisplay = true; // Cambia a true para detener la ejecución
@@ -31,7 +30,6 @@ request.onupgradeneeded = function (event) {
   db = event.target.result;
   const store = db.createObjectStore("miAlmacen", {
     keyPath: "id",
-    audio: addAudio,
     autoIncrement: true,
   });
   console.log("Almacén de objetos creado");
@@ -94,6 +92,7 @@ function SetUpStream(stream) {
     let blob = new Blob(chunks, { type: "audio/webm" });
     chunks = [];
     displayAudio(blob);
+    loadAudiosFromDB;
     agregarAudio(allAudios);
   };
 
@@ -142,7 +141,7 @@ function displayAudio(blob) {
     audioData: blob,
   };
 
-  console.log(allAudios);
+  //console.log(audioURLObj);
 
   const audioElement = document.createElement("audio");
 
@@ -158,7 +157,6 @@ function displayAudio(blob) {
 
   addEventListener("dragstart", (event) => {
     draggedElement = event.target;
-    playback.currentSrc;
     console.log(draggedElement.currentSrc);
   });
 
@@ -173,9 +171,9 @@ function displayAudio(blob) {
     if (index > -1) {
       allAudios.splice(index, 1);
     }
+    console.log(audioURLObj.audioURL);
 
     draggedElement.remove();
-    console.log(draggedElement);
   });
 }
 
@@ -207,4 +205,8 @@ function loadAudiosFromDB() {
   request.onerror = function (event) {
     console.error("Error al cargar audios desde la base de datos", event);
   };
+}
+
+function deleteAudioFromDb() {
+  console.log(audioURLObj.audioURL);
 }

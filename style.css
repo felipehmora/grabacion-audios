@@ -11,7 +11,21 @@ body {
   gap: 20px;
 }
 
+.side-menu {
+  margin-top: 1.5%;
+  margin-left: 2%;
+  margin-bottom: 2%;
+}
+
+.delete {
+  margin-top: 1.5%;
+  margin-right: 3%;
+}
+
 nav {
+  display: flex;
+  align-content: stretch;
+  gap: 85%;
   background-color: #eee;
   width: 100%;
   height: 100%;
@@ -67,10 +81,8 @@ nav > ul > li {
 }
 
 .side-menu {
-  position: relative;
   right: 10%;
   top: 0;
-  background-color: grey;
   width: 10%;
   height: 100%;
 }
