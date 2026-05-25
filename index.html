@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Graba audio y video en la web</title>
+    <link rel="stylesheet" href="node_modules/toastify-js/src/toastify.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="node_modules/normalize.css/normalize.css" />
   </head>
@@ -20,7 +21,7 @@
         </li>
         <li class="delete-button" id="delete-button">
           <button id="delete">
-            <img src="assets/delete-2-svgrepo-com.svg" alt="" />
+            <i data-lucide="Trash2"></i>
           </button>
         </li>
       </ul>
@@ -35,18 +36,21 @@
 
     <div>
       <button type="button" id="mic" class="record-button">
-        <img
-          src="assets/mic-svgrepo-com.svg"
-          alt=""
-          srcset=""
-          class="mic-icon"
-        />
+        <i data-lucide="Mic"></i>
       </button>
     </div>
-    <div class="audio-container">
-      <audio src="" class="playback" controls></audio>
+    <div class="audio-container"></div>
+    <div class="pagination-controls" id="pagination-controls">
+      <button id="prev-page">&larr;</button>
+      <span id="page-indicator"></span>
+      <button id="next-page">&rarr;</button>
     </div>
 
+    <script src="node_modules/lucide/dist/umd/lucide.min.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="node_modules/toastify-js/src/toastify.js"></script>
     <script src="record.js"></script>
   </body>
 </html>

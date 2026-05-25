@@ -82,19 +82,26 @@ nav > ul > li {
   border-radius: 100%;
   border-style: solid;
   border-color: rgba(128, 128, 128, 10%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.mic-icon {
-  position: relative;
-  align-content: center;
-  right: 5%;
-  color: rgba(128, 128, 128, 10%);
+.record-button svg {
+  width: 120px !important;
+  height: 120px !important;
+  color: #000000 !important;
+  stroke: #000000 !important;
 }
 
 .recording {
-  width: 200px;
-  height: 200px;
   border-color: #ff3131;
+}
+
+.recording svg {
+  color: #ff3131 !important;
+  stroke: #ff3131 !important;
 }
 
 .audio-container {
@@ -118,6 +125,12 @@ nav > ul > li {
   margin-left: 90%;
 }
 
+.delete-button.drag-active button {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.6));
+  transition: transform 0.2s, filter 0.2s;
+}
+
 @media (max-width: 450px) {
   .delete-button {
     margin-top: 10%;
@@ -126,4 +139,66 @@ nav > ul > li {
 
 button {
   border-style: none;
+}
+
+#delete {
+  background: transparent;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+#delete:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+#delete i {
+  width: 28px;
+  height: 28px;
+  color: #666;
+  stroke-width: 2;
+}
+
+.pagination-controls {
+  display: none;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.pagination-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: #d4c5b9;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #bfb1a8;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#page-indicator {
+  font-size: 14px;
+  color: #333;
+  min-width: 100px;
+  text-align: center;
 }

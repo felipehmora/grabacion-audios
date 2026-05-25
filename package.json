@@ -9,6 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "normalize.css": "^8.0.1"
+    "lucide": "^1.16.0",
+    "normalize.css": "^8.0.1",
+    "toastify-js": "^1.12.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

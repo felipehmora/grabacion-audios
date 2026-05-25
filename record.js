@@ -1,11 +1,70 @@
 const mic_btn = document.querySelector("#mic");
-const playback = document.querySelector("audio");
 const audio_container = document.querySelector(".audio-container");
 const aside = document.querySelector("aside");
 const deleteAudio = document.querySelectorAll(".playback");
 const garbage = document.querySelector("#delete-button");
+const paginationControls = document.querySelector("#pagination-controls");
+const prevPageBtn = document.querySelector("#prev-page");
+const nextPageBtn = document.querySelector("#next-page");
+const pageIndicator = document.querySelector("#page-indicator");
+
+const AUDIOS_PER_PAGE = 5;
+let recordedAudios = [];
+let currentPage = 1;
+let draggingElement = null;
+let draggingAudioIndex = null;
 
 mic_btn.addEventListener("click", ToogleMic);
+
+prevPageBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPage();
+  }
+});
+
+nextPageBtn.addEventListener("click", () => {
+  const totalPages = Math.ceil(recordedAudios.length / AUDIOS_PER_PAGE);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPage();
+  }
+});
+
+garbage.addEventListener("dragover", (e) => {
+  e.preventDefault();
+});
+
+garbage.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (draggingElement && draggingAudioIndex !== null) {
+    recordedAudios.splice(draggingAudioIndex, 1);
+    draggingElement = null;
+    draggingAudioIndex = null;
+    garbage.classList.remove("drag-active");
+
+    Toastify({
+      text: "Audio eliminado",
+      duration: 3000,
+      gravity: "bottom",
+      position: "right",
+      style: {
+        background: "#ef4444",
+      },
+      stopOnFocus: true,
+    }).showToast();
+
+    const totalPages = Math.ceil(recordedAudios.length / AUDIOS_PER_PAGE);
+    if (currentPage > totalPages) {
+      currentPage = Math.max(1, totalPages);
+    }
+    renderPage();
+  }
+});
+
+garbage.addEventListener("dragleave", () => {
+  garbage.classList.remove("drag-active");
+});
 
 function changeHover() {
   console.log("hola soy change");
@@ -75,35 +134,54 @@ function ToogleMic() {
 
 function displayAudio(blob) {
   console.log("display audio funciona");
-  const audioURL = window.URL.createObjectURL(blob);
+  recordedAudios.push(blob);
+  const totalPages = Math.ceil(recordedAudios.length / AUDIOS_PER_PAGE);
+  currentPage = totalPages;
+  renderPage();
+}
 
-  playback.src = audioURL;
+function renderPage() {
+  audio_container.innerHTML = "";
 
-  playback.controlsList = "download";
+  if (recordedAudios.length === 0) {
+    paginationControls.style.display = "none";
+    return;
+  }
 
-  const audioElement = document.createElement("audio");
+  paginationControls.style.display = "flex";
 
-  document.body.appendChild(audioElement);
+  const startIndex = (currentPage - 1) * AUDIOS_PER_PAGE;
+  const endIndex = startIndex + AUDIOS_PER_PAGE;
+  const audiosForPage = recordedAudios.slice(startIndex, endIndex);
 
-  audioElement.src = audioURL;
+  audiosForPage.forEach((blob, pageIndex) => {
+    const realIndex = startIndex + pageIndex;
+    const audioURL = window.URL.createObjectURL(blob);
+    const audioElement = document.createElement("audio");
 
-  audioElement.controls = true;
+    audio_container.appendChild(audioElement);
+    audioElement.src = audioURL;
+    audioElement.controls = true;
+    audioElement.classList.add("playback");
+    audioElement.draggable = true;
+    audioElement.dataset.audioIndex = realIndex;
 
-  audioElement.id = "audioCreated";
+    audioElement.addEventListener("dragstart", () => {
+      draggingElement = audioElement;
+      draggingAudioIndex = realIndex;
+      garbage.classList.add("drag-active");
+    });
 
-  audioElement.classList.add("playback");
-
-  audioElement.draggable = true;
-
-  audioElement.addEventListener("dragstart", () => {
-    console.log("ayuda me estan moviendo");
+    audioElement.addEventListener("dragend", () => {
+      draggingElement = null;
+      draggingAudioIndex = null;
+      garbage.classList.remove("drag-active");
+    });
   });
 
-  audioElement.addEventListener("dragend", () => {
-    console.log("uf me soltaron");
-  });
+  const totalPages = Math.ceil(recordedAudios.length / AUDIOS_PER_PAGE);
+  pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
 
-  garbage.addEventListener("dragenter", () => {
-    audioElement.remove();
-  });
+  prevPageBtn.disabled = currentPage === 1;
+  nextPageBtn.disabled = currentPage === totalPages;
 }
