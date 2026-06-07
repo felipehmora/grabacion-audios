@@ -1,6 +1,7 @@
 import { recordedAudios, state, AUDIOS_PER_PAGE } from './state.js';
 import { renderPage } from './pagination.js';
 import { SetUpAudio } from './recorder.js';
+import { initTunerView } from '../tuner/tuner-ui.js';
 import './nav.js';
 
 const garbage = document.querySelector("#delete-button");
@@ -41,3 +42,4 @@ garbage.addEventListener("dragleave", () => {
 });
 
 SetUpAudio();
+initTunerView();
