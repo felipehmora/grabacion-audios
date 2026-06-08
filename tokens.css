@@ -8,6 +8,7 @@
   --color-accent:      #c0392b;
   --color-muted:       #8c7b72;
   --color-disabled:    #bbb;
+  --color-success:     #2ecc71;
 
   /* Tipografía */
   --font-family:        'Inter', system-ui, -apple-system, sans-serif;

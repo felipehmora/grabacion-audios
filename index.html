@@ -33,6 +33,7 @@
         >&times;</a
       >
       <a href="javascript:void(0)" id="nav-transcripciones">Transcribir</a>
+      <a href="javascript:void(0)" id="nav-afinador">Afinar</a>
     </div>
 
     <div>
@@ -44,6 +45,28 @@
     <div id="transcripts-view" style="display:none">
       <h2 class="transcripts-title">Transcripciones</h2>
       <div id="transcripts-list"></div>
+    </div>
+    <div id="tuner-view" style="display:none">
+      <h2 class="tuner-title">Afinador — Cuatro Venezolano</h2>
+
+      <div class="tuner-selectors">
+        <select id="tuner-tuning-select" aria-label="Afinación"></select>
+      </div>
+
+      <button type="button" id="tuner-start-btn" class="tuner-start-btn">
+        Iniciar afinador
+      </button>
+
+      <div id="tuner-strings" class="tuner-strings"></div>
+
+      <svg id="tuner-gauge" class="tuner-gauge" viewBox="0 0 200 110" width="240" height="140" aria-hidden="true">
+        <path class="gauge-track" d="M 10 100 A 90 90 0 0 1 190 100" fill="none" stroke-width="8" />
+        <line id="gauge-needle" class="gauge-needle" x1="100" y1="100" x2="100" y2="20" stroke-width="3" stroke-linecap="round" />
+        <circle class="gauge-pivot" cx="100" cy="100" r="6" />
+      </svg>
+
+      <div id="tuner-note-display" class="tuner-note-display">--</div>
+      <div id="tuner-freq-display" class="tuner-freq-display">0.0 Hz</div>
     </div>
     <div class="pagination-controls" id="pagination-controls">
       <button id="prev-page">&larr;</button>
