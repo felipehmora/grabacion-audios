@@ -1,8 +1,5 @@
 // AudioWorkletProcessor del afinador. Corre en el hilo de audio realtime
-// (AudioWorkletGlobalScope), por lo que debe permanecer ligero: solo acumula
-// las muestras entrantes en un buffer de tamaño fijo y, al llenarse, lo envía
-// al hilo principal vía postMessage. El cálculo de pitch (MPM, costoso) se
-// hace deliberadamente fuera de aquí, en tuner.js — ver pitch-detector.js.
+// (AudioWorkletGlobalScope): acumula muestras y las envía al hilo principal.
 
 const BUFFER_SIZE = 4096;
 
@@ -22,8 +19,6 @@ class PitchProcessor extends AudioWorkletProcessor {
       this._buffer[this._writeIndex++] = channel[i];
 
       if (this._writeIndex === BUFFER_SIZE) {
-        // Copia del buffer: postMessage con transferable dejaría el array
-        // "neutered" y no podríamos seguir escribiendo en él.
         this.port.postMessage({ buffer: this._buffer.slice(), sampleRate });
         this._writeIndex = 0;
       }

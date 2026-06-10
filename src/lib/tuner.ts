@@ -1,33 +1,44 @@
-// Motor de audio del afinador: gestiona su propio AudioContext, completamente
-// independiente del MediaRecorder usado por el grabador (src/recorder.js).
-// No toca el DOM — eso es responsabilidad de tuner-ui.js.
+// Motor de audio del afinador. No toca el DOM.
+// El AudioWorklet vive en public/pitch-worklet.js, servido como asset estático.
 
-import { detectPitch } from './pitch-detector.js';
+import { detectPitch } from './pitch-detector';
 
 const SMOOTHING_ALPHA = 0.2;
 
+interface PitchData {
+  frequency: number;
+  rawFrequency: number;
+}
+
+interface TunerCallbacks {
+  onPitch?: (data: PitchData) => void;
+  onError?: (err: Error) => void;
+}
+
 export class Tuner {
-  constructor({ onPitch, onError } = {}) {
+  private _onPitch?: (data: PitchData) => void;
+  private _onError?: (err: Error) => void;
+
+  private _ctx: AudioContext | null = null;
+  private _stream: MediaStream | null = null;
+  private _source: MediaStreamAudioSourceNode | null = null;
+  private _analyser: AnalyserNode | null = null;
+  private _worklet: AudioWorkletNode | null = null;
+  private _smoothedFreq: number | null = null;
+  private _running = false;
+
+  constructor({ onPitch, onError }: TunerCallbacks = {}) {
     this._onPitch = onPitch;
     this._onError = onError;
-
-    this._ctx = null;
-    this._stream = null;
-    this._source = null;
-    this._analyser = null;
-    this._worklet = null;
-    this._smoothedFreq = null;
-    this._running = false;
   }
 
-  get isRunning() {
+  get isRunning(): boolean {
     return this._running;
   }
 
-  // Debe invocarse de forma síncrona dentro de un gesto de usuario (click):
-  // los navegadores (en particular iOS Safari) bloquean la creación/arranque
-  // de AudioContext y getUserMedia fuera de un user gesture.
-  async start() {
+  // Debe invocarse dentro de un gesto de usuario (iOS Safari requiere AudioContext
+  // y getUserMedia dentro de un user gesture).
+  async start(): Promise<void> {
     if (this._running) return;
 
     try {
@@ -46,12 +57,13 @@ export class Tuner {
       this._analyser = this._ctx.createAnalyser();
       this._analyser.fftSize = 8192;
 
-      await this._ctx.audioWorklet.addModule(new URL('./pitch-worklet.js', import.meta.url));
+      // pitch-worklet.js está en public/ y se sirve desde la raíz del origen.
+      await this._ctx.audioWorklet.addModule('/pitch-worklet.js');
       this._worklet = new AudioWorkletNode(this._ctx, 'pitch-processor');
-      this._worklet.port.onmessage = (event) => this._handleWorkletMessage(event.data);
+      this._worklet.port.onmessage = (event: MessageEvent) =>
+        this._handleWorkletMessage(event.data);
 
-      // Conectados solo entre sí: NUNCA a `destination`, para no producir
-      // realimentación acústica del micrófono hacia los parlantes.
+      // Nunca conectar a destination para evitar realimentación del micrófono.
       this._source.connect(this._analyser);
       this._source.connect(this._worklet);
 
@@ -59,13 +71,11 @@ export class Tuner {
       this._running = true;
     } catch (err) {
       await this.stop();
-      this._onError?.(err);
+      this._onError?.(err instanceof Error ? err : new Error(String(err)));
     }
   }
 
-  // Idempotente: libera micrófono, nodos y AudioContext. Seguro de llamar
-  // sin haber arrancado o más de una vez (p. ej. al cambiar de vista).
-  async stop() {
+  async stop(): Promise<void> {
     if (this._worklet) {
       this._worklet.port.onmessage = null;
       this._worklet.disconnect();
@@ -73,8 +83,6 @@ export class Tuner {
     this._analyser?.disconnect();
     this._source?.disconnect();
 
-    // Detener los tracks es lo que realmente libera el micrófono a nivel de
-    // navegador/SO — cerrar el AudioContext por sí solo no basta.
     this._stream?.getTracks().forEach((track) => track.stop());
 
     if (this._ctx && this._ctx.state !== 'closed') {
@@ -90,7 +98,7 @@ export class Tuner {
     this._running = false;
   }
 
-  _handleWorkletMessage({ buffer, sampleRate }) {
+  private _handleWorkletMessage({ buffer, sampleRate }: { buffer: Float32Array; sampleRate: number }): void {
     const rawFrequency = detectPitch(buffer, sampleRate);
     if (!rawFrequency) return;
 
