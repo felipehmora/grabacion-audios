@@ -1,0 +1,19 @@
+html {
+  font-family: var(--font-family);
+}
+
+body {
+  background-color: var(--color-bg);
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  border-style: none;
+  font-family: var(--font-family);
+}

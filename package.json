@@ -1,18 +1,26 @@
 {
-  "name": "notas-de-voz",
-  "version": "1.0.0",
-  "description": "",
-  "main": "record.js",
+  "name": "cuatro-venezolano-app",
+  "version": "2.0.0",
+  "type": "module",
   "scripts": {
-    "start": "http-server . -p $PORT --cors",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "start": "vite preview --port $PORT --host"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "http-server": "^14.1.1",
-    "lucide": "^1.16.0",
+    "lucide-react": "^0.474.0",
     "normalize.css": "^8.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "toastify-js": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
   }
 }

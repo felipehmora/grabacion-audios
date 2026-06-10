@@ -1,24 +1,13 @@
 // Detección de tono mediante el algoritmo MPM (McLeod Pitch Method).
-// Función pura: no toca el DOM ni APIs de audio, solo recibe un buffer de
-// muestras PCM (Float32Array, rango [-1, 1]) y la frecuencia de muestreo.
+// Función pura: no toca el DOM ni APIs de audio.
 
-// Rango de frecuencias de interés (cubre las cuerdas del Cuatro Venezolano,
-// incluyendo su octava alternativa más grave B2 ≈ 123 Hz, con margen).
 const MIN_FREQ = 70;
 const MAX_FREQ = 500;
-
-// Umbral de "paralelismo" del MPM: solo se aceptan picos cuya altura sea al
-// menos esta fracción del pico global, evitando elegir armónicos.
 const PEAK_THRESHOLD = 0.8;
-
-// Por debajo de esta claridad (altura del NSDF en el pico elegido) se
-// considera que no hay un tono predominante claro.
 const CLARITY_THRESHOLD = 0.5;
-
-// Por debajo de esta energía RMS se considera silencio/ruido de fondo.
 const RMS_THRESHOLD = 0.01;
 
-export function detectPitch(buffer, sampleRate) {
+export function detectPitch(buffer: Float32Array, sampleRate: number): number | null {
   if (rms(buffer) < RMS_THRESHOLD) return null;
 
   const minLag = Math.max(1, Math.floor(sampleRate / MAX_FREQ));
@@ -34,18 +23,15 @@ export function detectPitch(buffer, sampleRate) {
   return sampleRate / refinedIndex;
 }
 
-function rms(buffer) {
+function rms(buffer: Float32Array): number {
   let sum = 0;
   for (let i = 0; i < buffer.length; i++) sum += buffer[i] * buffer[i];
   return Math.sqrt(sum / buffer.length);
 }
 
-// Función de diferencia cuadrática normalizada:
-//   NSDF(τ) = 2 · ACF(τ) / [ Σ x[i]² + Σ x[i+τ]² ]   para i = 0..N-τ-1
-// Combina autocorrelación con un término de normalización de energía, lo que
-// la hace más robusta que la autocorrelación cruda frente a cambios de
-// amplitud. Solo se calcula para el rango [minLag, maxLag] de interés.
-function computeNSDF(buffer, minLag, maxLag) {
+// NSDF: NSDF(τ) = 2·ACF(τ) / [Σx[i]² + Σx[i+τ]²]
+// Más robusta que autocorrelación cruda frente a cambios de amplitud.
+function computeNSDF(buffer: Float32Array, minLag: number, maxLag: number): Float32Array {
   const n = buffer.length;
   const nsdf = new Float32Array(maxLag + 1);
 
@@ -62,17 +48,13 @@ function computeNSDF(buffer, minLag, maxLag) {
   return nsdf;
 }
 
-// Selección de "key maxima": recorre los lóbulos positivos del NSDF (entre
-// cruces ascendentes y descendentes por cero), guarda el máximo local de cada
-// uno, y elige el PRIMERO cuya altura supere `threshold * máximoGlobal`. Esto
-// favorece la frecuencia fundamental sobre sus armónicos (que producen picos
-// más altos pero más tarde en el eje de lags).
-function pickPeak(nsdf, minLag, maxLag, threshold) {
-  const maxima = [];
+// Selecciona el primer pico que supere threshold * máximo global.
+// Favorece la fundamental sobre armónicos.
+function pickPeak(nsdf: Float32Array, minLag: number, maxLag: number, threshold: number): number {
+  const maxima: number[] = [];
   let i = minLag;
 
   while (i < maxLag) {
-    // avanzar hasta un cruce ascendente por cero
     while (i < maxLag && nsdf[i] <= 0) i++;
 
     let maxIdx = -1;
@@ -94,9 +76,7 @@ function pickPeak(nsdf, minLag, maxLag, threshold) {
   return maxima[0];
 }
 
-// Refina el índice entero del pico a un valor sub-muestra ajustando una
-// parábola a los tres puntos vecinos (x-1, x, x+1).
-function parabolicInterpolation(nsdf, x) {
+function parabolicInterpolation(nsdf: Float32Array, x: number): number {
   const x0 = x - 1;
   const x2 = x + 1;
   if (x0 < 0 || x2 >= nsdf.length) return x;

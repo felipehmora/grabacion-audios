@@ -1,0 +1,22 @@
+.gauge {
+  width: 300px;
+  height: 175px;
+}
+
+.track {
+  stroke: var(--color-border);
+}
+
+.needle {
+  stroke: var(--color-accent);
+  transform-origin: 100px 100px;
+  transition: transform var(--transition-fast), stroke var(--transition-normal);
+}
+
+.needle.inTune {
+  stroke: var(--color-success);
+}
+
+.pivot {
+  fill: var(--color-primary);
+}
